@@ -8,7 +8,7 @@ class Player {
   
   //animation variables
   int currentFrame, frameSequence, IdleTimer;
-  boolean facingRight;
+  boolean facingRight, wind;
   int frameTime, lastMoved;
   int IdleAnimationPos;
   
@@ -35,6 +35,7 @@ class Player {
     friction = 0.1;
     bounce = -0;
     gravity = 0.3;
+    wind = false;
     
     halfWidth = w/2;
     halfHeight = h/2;
@@ -101,6 +102,14 @@ class Player {
     
     //apply gravity
     vy += gravity;
+    
+    //Wind force
+    if (y < 2560 && y > 1560) {
+      wind = true;
+      vx += -0.15;
+    } else {
+      wind = false;
+    }
     
     //Correction for max speed
     if (vx > speedLimit) {
@@ -178,7 +187,7 @@ class Player {
     }
     if(true){
       if (facingRight) {
-        if (millis() - lastMoved > IdleTimer) {
+        if (millis() - lastMoved > IdleTimer && !wind) {
           image(IdleAnimationRight[IdleAnimationPos][currentFrame], x - halfWidth, y);
           if (millis() - lastMoved > IdleTimer + 3000) {
             lastMoved = millis();
@@ -186,8 +195,13 @@ class Player {
           }
         } else {
           if (isOnGround) {
-            if (abs(vx) > 0) {
-              image(RRunImages[currentFrame], x - halfWidth, y);
+            if (abs(vx) > 0 && right) {
+              println(right);
+              if (wind) {
+                image(RWindRunImages[currentFrame], x - halfWidth, y);
+              } else {
+                image(RRunImages[currentFrame], x - halfWidth, y);
+              }
             } else {
               if (down) {
                 image(RDownImage, x - halfWidth, y);
@@ -212,7 +226,7 @@ class Player {
           }
         } else {
           if (isOnGround) {
-            if (abs(vx) > 0) {
+            if (abs(vx) > 0 && left) {
               image(LRunImages[currentFrame], x - halfWidth, y);
             } else {
               if (down) {
@@ -230,7 +244,6 @@ class Player {
           }
         }
       }
-      image(pizzaStandImages[currentFrame], 400, 4500);
       if ((millis() - frameTime) > 100) {
         frameTime = millis(); 
         currentFrame = (currentFrame + 1)%frameSequence;

@@ -17,6 +17,7 @@ class ImageObject{
   void display(){
     fill(0,0,255, 0);
     rect(x,y,w,h);
+    noStroke();
     image(img, x,y);
   }
 }
